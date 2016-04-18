@@ -22,9 +22,12 @@ def get_feature_directories():
     settings = _get_package_settings()
     feature_directories = settings.get('feature_file_directories', default=[])
     
-    feature_directories_absolute_path = settings.get('feature_file_directories_absolute', default=[])
+    feature_directories_paths = []
+    for folder in feature_directories:   
+        if os.path.exists(folder):
+            feature_directories_paths.append(folder)
+            feature_directories.remove(folder)
     
-    feature_directories_paths = feature_directories_absolute_path
     for project_folder in sublime.active_window().folders():        
         folders = os.listdir(project_folder)
         for folder in folders:
