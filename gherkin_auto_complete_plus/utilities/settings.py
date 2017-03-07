@@ -1,5 +1,5 @@
 import logging
-
+import os, re
 import sublime
 
 
@@ -21,7 +21,21 @@ def get_feature_directories():
     """
     settings = _get_package_settings()
     feature_directories = settings.get('feature_file_directories', default=[])
-    return feature_directories
+    
+    feature_directories_paths = []
+    for folder in feature_directories:   
+        if os.path.exists(folder):
+            feature_directories_paths.append(folder)
+            feature_directories.remove(folder)
+    
+    for project_folder in sublime.active_window().folders():        
+        folders = os.listdir(project_folder)
+        for folder in folders:
+          if any(folder in features_path for features_path in feature_directories):
+            full_folder_path = os.path.join(project_folder, folder)
+            feature_directories_paths.append(full_folder_path + "/*")
+
+    return feature_directories_paths
 
 
 def ignore_open_directories():
